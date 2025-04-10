@@ -1,3 +1,5 @@
+import time
+
 from kivy.uix.screenmanager import Screen, SlideTransition
 import random
 from kivy.uix.button import Button
@@ -6,7 +8,6 @@ from utils.U_button_to_show import u_btn_img, u_btn_left
 from kivy.graphics import Color, Rectangle
 import sqlite3
 from kivy.core.audio import SoundLoader
-
 
 bk_cmt_sql = sqlite3.connect('book_cnt.db')
 bk_c = bk_cmt_sql.cursor()
@@ -21,6 +22,7 @@ if len(res) != 0:
 else:
     al_wd = []
 
+
 class S_p_s(Screen):
     def __init__(self, **kwargs):
         super(S_p_s, self).__init__(**kwargs)
@@ -28,6 +30,9 @@ class S_p_s(Screen):
         self.al_wd = al_wd
         self.bind(size=self.update)
         self.i_n = 0
+        with self.canvas:
+            Color(1, 1, 1, .9)
+            self.r = Rectangle(pos=(0, 0), size=(self.width, self.height))
 
     def on_pre_enter(self, *args):
         bk_c.execute("""create table if not exists now_book_word(now_book text,now_word text)""")
@@ -44,10 +49,10 @@ class S_p_s(Screen):
             self.random_list = random.sample(range(0, len(self.al_wd)), len(self.al_wd))
             self.s_n_w = self.al_wd[int(self.random_list[0])][0]
         self.update()
+
     def update(self, *args):
-        with self.canvas:
-            Color(1, 1, 1, .9)
-            Rectangle(pos=(0, 0), size=(self.width, self.height))
+        self.clear_widgets()
+        self.r.size = (self.width, self.height)
         self.new_w(self.i_n)
 
     def new_w(self, i):
@@ -96,7 +101,6 @@ class S_p_s(Screen):
             )
             self.add_widget(self.list_b_3)
 
-            print(i)
             all_chinese = self.al_wd[int(self.random_list[i])][1].split('|')
             ch = ''
             for i in all_chinese:
@@ -144,4 +148,4 @@ class S_p_s(Screen):
             self.clear_widgets()
             self.new_w(self.i_n)
         else:
-            self.textinput.background_color=(1,0,0,1)
+            self.textinput.background_color = (1, 0, 0, 1)
